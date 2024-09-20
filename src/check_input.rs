@@ -4,7 +4,30 @@ use crate::builtins::exit::exit;
 use crate::utils::constants::ERROR;
 use crate::utils::constants::NOT_FOUND;
 
+use std::env;
+use std::process::Command;
+
 fn launch_bin(words_array: &Vec<&str>) -> i32 {
+    let cmd = words_array.first().unwrap();
+    let all_path: String = env::var("PATH").unwrap();
+    let path = all_path
+        .split(':')
+        .find(|path: &&str| std::fs::metadata(format!("{}/{}", path, cmd)).is_ok());
+
+    if path.is_some() {
+        let command_output: std::process::Output =
+            Command::new(format!("{}/{}", path.unwrap(), cmd))
+                .args(&words_array[1..])
+                .output()
+                .expect("Failed to execute command");
+
+        let output = String::from_utf8_lossy(&command_output.stdout);
+        let trimmed_output = output.trim().replace("\n", " ");
+        println!("{}", trimmed_output);
+
+        return 0;
+    }
+
     return ERROR;
 }
 
@@ -23,11 +46,6 @@ pub fn check_command(user_input: String) {
     let mut return_value: i32;
 
     let words_array: Vec<&str> = user_input.split(' ').collect();
-
-    if words_array.is_empty() {
-        println!("Please enter a command.");
-        return;
-    }
 
     return_value = check_builtins(&words_array);
 
