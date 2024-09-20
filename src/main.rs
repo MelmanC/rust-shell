@@ -1,18 +1,21 @@
-mod commands;
+mod builtins;
 
-use commands::exit::exit;
+use builtins::echo::echo;
+use builtins::exit::exit;
 
 #[allow(unused_imports)]
 use std::io::{self, Write};
 
 fn check_command(user_input: String) {
-    let first_word: Vec<&str> = user_input.split(' ').collect();
+    let words_array: Vec<&str> = user_input.split(' ').collect();
 
-    if first_word.get(0) == Some(&"exit") {
-        exit(first_word);
+    if words_array.get(0) == Some(&"exit") {
+        exit(words_array);
+    } else if words_array.get(0) == Some(&"echo") {
+        echo(words_array);
+    } else {
+        print!("{}: command not found\n", user_input.trim());
     }
-
-    print!("{}: command not found\n", user_input.trim());
 }
 
 fn main() {
