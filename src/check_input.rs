@@ -22,6 +22,7 @@ fn launch_bin(words_array: &Vec<&str>) -> i32 {
                 .expect("Failed to execute command");
 
         let output = String::from_utf8_lossy(&command_output.stdout);
+
         let trimmed_output = output.trim().replace("\n", " ");
         println!("{}", trimmed_output);
 
