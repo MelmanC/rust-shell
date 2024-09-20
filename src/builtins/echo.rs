@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
 
-pub fn echo(words_array: Vec<&str>) {
+pub fn echo(words_array: &Vec<&str>) {
     let mut output: String = String::new();
 
     for words in words_array.iter().skip(1) {
