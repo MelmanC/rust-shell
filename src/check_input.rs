@@ -1,3 +1,4 @@
+use crate::builtins::cd::change_directory;
 use crate::builtins::echo::echo;
 use crate::builtins::exit::exit;
 
@@ -8,9 +9,9 @@ use std::env;
 use std::process::Command;
 
 fn launch_bin(words_array: &Vec<&str>) -> i32 {
-    let cmd = words_array.first().unwrap();
+    let cmd: &&str = words_array.first().unwrap();
     let all_path: String = env::var("PATH").unwrap();
-    let path = all_path
+    let path: Option<&str> = all_path
         .split(':')
         .find(|path: &&str| std::fs::metadata(format!("{}/{}", path, cmd)).is_ok());
 
@@ -23,8 +24,8 @@ fn launch_bin(words_array: &Vec<&str>) -> i32 {
 
         let output = String::from_utf8_lossy(&command_output.stdout);
 
-        let trimmed_output = output.trim().replace("\n", " ");
-        println!("{}", trimmed_output);
+        // let trimmed_output = output.trim().replace("\n", " "); // need to modify output buffer...
+        print!("{}", output);
 
         return 0;
     }
@@ -38,6 +39,9 @@ fn check_builtins(words_array: &Vec<&str>) -> i32 {
         return 0;
     } else if words_array.get(0) == Some(&"echo") {
         echo(words_array);
+        return 0;
+    } else if words_array.get(0) == Some(&"cd") {
+        change_directory(words_array);
         return 0;
     }
     return NOT_FOUND;
